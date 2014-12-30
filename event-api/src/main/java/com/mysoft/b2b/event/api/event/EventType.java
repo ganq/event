@@ -1,0 +1,105 @@
+/**
+ * Copyright mysoft Limited (c) 2014. All rights reserved.
+ * This software is proprietary to and embodies the confidential
+ * technology of mysoft Limited. Possession, use, or copying
+ * of this software and media is authorized only pursuant to a
+ * valid written license from mysoft or an authorized sublicensor.
+ */
+package com.mysoft.b2b.event.api.event;
+
+import java.io.Serializable;
+import java.util.Date;
+
+/**
+ * Administrator: 事件类型
+ * @version   Revision History
+ * <pre>
+ * Author     Version       Date        Changes
+ * Administrator    1.0           2014年8月21日     Created
+ *
+ * </pre>
+ * @since b2b 1.5.0
+ */
+
+@SuppressWarnings("serial")
+public class EventType implements Serializable {
+	
+	/**
+	 * 事件类型编码
+	 */
+	private String typeCode;
+	/**
+	 * 事件类型名
+	 */
+	private String name;
+	
+	/**
+	 * 状态：1可用，2不可用，。。暂时不控制
+	 */
+	private int status;
+	
+	private String createdBy;
+	
+	private Date createdTime;
+	
+	private String lastModifiedBy;
+	
+	private Date lastModifiedTime;
+	
+	public String getTypeCode() {
+		return typeCode;
+	}
+
+	public void setTypeCode(String typeCode) {
+		this.typeCode = typeCode;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public Date getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(Date createdTime) {
+		this.createdTime = createdTime;
+	}
+
+	public Date getLastModifiedTime() {
+		return lastModifiedTime;
+	}
+
+	public void setLastModifiedTime(Date lastModifiedTime) {
+		this.lastModifiedTime = lastModifiedTime;
+	}
+	
+}

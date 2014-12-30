@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	>
+
+	<context:property-placeholder location="classpath*:db.properties" />
+
+	<!-- 数据源 -->
+    <bean id="dataSource" class="com.mysoft.b2b.event.util.MysoftDataSource" 
+        destroy-method="close">
+        <property name="driverClass" value="${db.driverClass}" />
+        <property name="jdbcUrl" value="${db.jdbcUrl}" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+        <!-- 检查连接池中连接的活性，一个小时检查一次 -->
+        <property name="idleConnectionTestPeriod" value="60" />
+        <!-- 检查连接池空闲连接的存在时间，和上一个配置有关系，需要统一设置，在现阶段链接够用的情况下，暂时不修改 -->
+        <property name="idleMaxAge" value="240" />
+        <!-- 连接池中连接分组,主要是为了提高性能,现有业务情况下都设置成2,以后可能用户公司模块单独设置,其他模板暂时不需要考虑. -->
+        <property name="partitionCount" value="2" />
+        <!-- 每组中连接池，最大数量，现有配置需要统一调小，一般模板设置成10个都已经很大了 -->
+        <property name="maxConnectionsPerPartition" value="20" />
+        <!-- 每组中连接池，最小数量，现有配置需要统一调小，一般模板设置成5个都已经很大了 -->
+        <property name="minConnectionsPerPartition" value="10" />
+        <!-- 连接池阀值，保证经常都有一定量总比例的连接是空闲的，尽量不阻塞程序，让程序等待连接获取。 -->
+        <property name="poolAvailabilityThreshold" value="20"></property>
+        <!-- 每组中连接池，现有连接全部使用完毕时，一次创建多少个连接，一般设置成2就够了，2/10也对应上面阀值的设置。 -->
+        <property name="acquireIncrement" value="5" />
+        <!-- 连接 建立时的时间限制，这个值应该是一个偏小的值，即1秒连接获取不成功直接报错，-->
+        <!-- 个人应该需要重试机制，但是不能等待3秒以后直接报错，暂时可以不用管，通过提示用户重复请求（日志记录，统计），而且局域网网络一般比较稳定 -->
+        <property name="connectionTimeout" value="3000"></property>
+	</bean>
+
+	
+	<!-- 开启注解配置 -->
+	<context:annotation-config />
+
+	<!-- 开启事务注解驱动 -->
+	<tx:annotation-driven />
+
+	<!-- 事务管理器 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+		<property name="defaultTimeout" value="180"></property>
+	</bean>
+
+	<!-- 创建SqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.mysoft.b2b.event.api.app,com.mysoft.b2b.event.api.event" />
+		<property name="mapperLocations" value="classpath*:mybatis/mappers/**/*.xml" />
+	</bean>
+
+	<!-- 自动扫描映射器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.mysoft.b2b.event.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 扫描service层 -->
+	<context:component-scan base-package="com.mysoft.b2b.event.provider" />
+	
+	<!-- 配置文件型  事务管理 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">  
+    <tx:attributes>  
+        <tx:method name="add*" propagation="REQUIRED" />
+        <tx:method name="save*" propagation="REQUIRED" />
+        <tx:method name="insert*" propagation="REQUIRED" />
+        <tx:method name="check*" propagation="REQUIRED" />
+        <tx:method name="update*" propagation="REQUIRED" />  
+        <tx:method name="delete*" propagation="REQUIRED" />  
+        <tx:method name="get*" propagation="REQUIRED" read-only="true" /> 
+        <tx:method name="select*" propagation="REQUIRED" read-only="true" />
+    </tx:attributes>
+	</tx:advice>  
+	<aop:config>  
+	    <aop:pointcut id="interceptorPointCuts"  
+	        expression="execution(* com.mysoft.b2b.event.provider.*.*(..))" />  
+	    <aop:advisor advice-ref="txAdvice"  
+	        pointcut-ref="interceptorPointCuts" />          
+	</aop:config>
+	
+	
+</beans>
+

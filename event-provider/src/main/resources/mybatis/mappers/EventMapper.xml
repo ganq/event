@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mysoft.b2b.event.mapper.EventMapper">
+
+	<insert id="insertEvent" parameterType="Event">
+		INSERT INTO
+			b2b_support.bizp_event(
+			event_id,
+			type_code,
+			event_content,
+			status,
+			remark,
+			created_by,
+			created_time,
+			last_dealt_time
+		)
+		VALUES
+		(
+			#{eventId},
+			#{typeCode},
+			#{eventContent},
+			#{status},
+			#{remark},
+			#{createdBy},
+			#{createdTime},
+			#{lastDealtTime}
+		)
+	</insert>
+	
+	<update id="updateEvent" parameterType="Event">
+		UPDATE
+			b2b_support.bizp_event
+		SET
+			type_code = #{typeCode},
+			event_content = #{eventContent},
+			status = #{status},
+			remark = #{remark},
+			created_by = #{createdBy},
+			created_time = #{createdTime},
+			last_dealt_time = #{lastDealtTime}
+		WHERE
+			event_id = #{eventId}
+	</update>
+	
+	<delete id="deleteEvent" parameterType="String">
+		DELETE  
+		FROM 
+			b2b_support.bizp_event
+		WHERE 
+			event_id = #{0}
+	</delete>
+	
+	<select id="getEvent" parameterType="String" resultType="Event">
+		SELECT 
+			event_id as eventId,
+			type_code as typeCode,
+			event_content as eventContent ,
+			status as status,
+			remark as remark,
+			created_by as createdBy,
+			created_time as createdTime,
+			last_dealt_time as lastDealtTime
+		FROM 
+			b2b_support.bizp_event
+		WHERE
+			event_id = #{eventId}
+	</select>
+	
+	<select id="getEventList" parameterType="EventCriteria" resultType="Event">
+		SELECT 
+			event_id as eventId,
+			type_code as typeCode,
+			event_content as eventContent ,
+			status as status,
+			remark as remark,
+			created_by as createdBy,
+			created_time as createdTime,
+			last_dealt_time as lastDealtTime
+		FROM 
+			b2b_support.bizp_event
+		WHERE 1=1
+		<if test="eventId != null and eventId != ''">
+			and event_id = #{eventId}
+		</if>
+		<if test="typeCode != null and typeCode != ''">
+			and type_code = #{typeCode}
+		</if>
+		<if test="eventContent != null and eventContent != ''">
+			and event_content = #{eventContent}
+		</if>
+		<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and created_by = #{createdBy}
+		</if>
+		<if test="createdTime != null">
+			and created_time = #{createdTime}
+		</if>
+		<if test="lastDealtTime != null">
+			and last_dealt_time = #{lastDealtTime}
+		</if>
+		<if test="statuss !=null and statuss.size()>0">
+			and status in 
+			<foreach collection="statuss" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY event_id DESC
+		LIMIT #{offset},#{pageSize}
+	</select>
+	
+	<select id="getEventCount" parameterType="EventCriteria" resultType="Integer">
+		SELECT 
+			count(*)
+		FROM 
+			b2b_support.bizp_event
+		WHERE 1=1
+		<if test="eventId != null and eventId != ''">
+			and event_id = #{eventId}
+		</if>
+		<if test="typeCode != null and typeCode != ''">
+			and type_code = #{typeCode}
+		</if>
+		<if test="eventContent != null and eventContent != ''">
+			and event_content = #{eventContent}
+		</if>
+		<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and created_by = #{createdBy}
+		</if>
+		<if test="createdTime != null">
+			and created_time = #{createdTime}
+		</if>
+		<if test="lastDealtTime != null">
+			and last_dealt_time = #{lastDealtTime}
+		</if>
+		<if test="statuss !=null and statuss.size()>0">
+			and status in 
+			<foreach collection="statuss" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+
+	<select id="insertEventLog" parameterType="EventLog">
+		INSERT into b2b_support.bizp_event_log(
+			event_log_id,
+			event_id,
+			app_id,
+			type_code,
+			event_content,
+			status,
+			try_times,
+			remark,
+			created_by,
+			created_time,
+			last_dealt_time
+		)
+		VALUES
+		(
+			#{eventLogId},
+			#{eventId},
+			#{appId},
+			#{typeCode},
+			#{eventContent},
+			#{status},
+			#{tryTimes},
+			#{remark},
+			#{createdBy},
+			#{createdTime},
+			#{lastDealtTime}
+		)
+	</select>
+	
+	<update id="updateEventLog" parameterType="EventLog">
+		UPDATE
+			b2b_support.bizp_event_log
+		SET
+			event_id = #{eventId},
+			app_id = #{appId},
+			type_code = #{typeCode},
+			event_content = #{eventContent},
+			status = #{status},
+			try_times = #{tryTimes},
+			remark = #{remark},
+			created_by = #{createdBy},
+			created_time = #{createdTime},
+			last_dealt_time = #{lastDealtTime}
+		WHERE
+			event_log_id = #{eventLogId}
+	</update>
+	
+	<delete id="deleteEventLog" parameterType="String">
+		DELETE 
+		FROM 
+			b2b_support.bizp_event_log
+		WHERE
+			event_log_id = #{0}
+	</delete>
+	
+	<select id="getEventLogList" parameterType="EventLogCriteria" resultType="EventLog">
+		SELECT 
+			event_log_id as eventLogId,
+			event_id as eventId,
+			app_id as appId,
+			type_code as typeCode,
+			event_content as eventContent,
+			status as status,
+			try_times as tryTimes,
+			remark as remark,
+			created_by as createdBy,
+			created_time as createdTime,
+			last_dealt_time as lastDealtTime
+		FROM 
+			b2b_support.bizp_event_log
+		WHERE 1=1
+		<if test="eventLogId != null and eventLogId != ''">
+			and event_log_id = #{eventLogId}
+		</if>
+		<if test="eventId != null and eventId != ''">
+			and event_id  = #{eventId}
+		</if>
+		<if test="appId != null and appId != ''">
+			and app_id = #{appId}
+		</if>
+		<if test="typeCode !=null and typeCode != ''">
+			and type_code = #{typeCode}
+		</if>
+		<if test="eventContent !=null and eventContent != ''">
+			and event_content = #{eventContent}
+		</if>
+		<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="tryTimes != null and tryTimes != ''">
+			and try_times = #{tryTimes}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and created_by = #{createdBy}
+		</if>
+		<if test="createdTime != null">
+			and created_time = #{createdTime}
+		</if>
+		<if test="lastDealtTime != null">
+			and last_dealt_time = #{lastDealtTime}
+		</if>
+		<if test="statuss !=null and statuss.size()>0">
+			and status in 
+			<foreach collection="statuss" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		ORDER BY event_log_id DESC
+		LIMIT #{offset},#{pageSize}	
+	</select>
+	
+	<select id="getEventLogCount" parameterType="EventLogCriteria" resultType="Integer">
+		SELECT 
+			count(*)
+		FROM 
+			b2b_support.bizp_event_log
+		WHERE 1=1
+		<if test="eventLogId != null and eventLogId != ''">
+			and event_log_id = #{eventLogId}
+		</if>
+		<if test="eventId != null and eventId != ''">
+			and event_id  = #{eventId}
+		</if>
+		<if test="appId != null and appId != ''">
+			and app_id = #{appId}
+		</if>
+		<if test="typeCode !=null and typeCode != ''">
+			and type_code = #{typeCode}
+		</if>
+		<if test="eventContent !=null and eventContent != ''">
+			and event_content = #{eventContent}
+		</if>
+		<if test="status != null">
+			and status = #{status}
+		</if>
+		<if test="tryTimes != null and tryTimes != ''">
+			and try_times = #{tryTimes}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="createdBy != null and createdBy != ''">
+			and created_by = #{createdBy}
+		</if>
+		<if test="createdTime != null">
+			and created_time = #{createdTime}
+		</if>
+		<if test="lastDealtTime != null">
+			and last_dealt_time = #{lastDealtTime}
+		</if>
+		<if test="statuss !=null and statuss.size()>0">
+			and status in 
+			<foreach collection="statuss" item="item" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
+	
+	<select id="getNotExecuteEvent" parameterType="EventCriteria" resultType="Event">
+		SELECT
+			event_id as eventId,
+			type_code as typeCode,
+			event_content as eventContent ,
+			status as status,
+			remark as remark,
+			created_by as createdBy,
+			created_time as createdTime,
+			last_dealt_time as lastDealtTime
+		FROM 
+			b2b_support.bizp_event
+		WHERE
+			(status = 1)
+		 or ((status=2 or status=4) and TIMESTAMPDIFF(MINUTE,last_dealt_time,#{lastDealtTime}) &gt; 2)
+		ORDER BY last_dealt_time DESC
+		LIMIT #{offset},#{pageSize}
+	</select>
+	
+	<select id="getNotExecuteEventLog" parameterType="EventLogCriteria" resultType="EventLog">
+		SELECT 
+			event_log_id as eventLogId,
+			event_id as eventId,
+			app_id as appId,
+			type_code as typeCode,
+			event_content as eventContent,
+			status as status,
+			try_times as tryTimes,
+			remark as remark,
+			created_by as createdBy,
+			created_time as createdTime,
+			last_dealt_time as lastDealtTime
+		FROM 
+			b2b_support.bizp_event_log
+		WHERE
+			(status=1 and last_dealt_time is null) 
+		 or (status=1 and last_dealt_time is not null and try_times &lt; #{tryTimes})
+		 or ((status=2 or status=4) and try_times &lt; #{tryTimes} and TIMESTAMPDIFF(MINUTE,last_dealt_time,#{lastDealtTime}) &gt; 2)
+	</select>
+
+</mapper>       
+        
+ 

@@ -1,0 +1,17 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/context    
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd 
+           http://code.alibabatech.com/schema/dubbo 
+           http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+	default-autowire="byName">
+	
+	<dubbo:reference id="appSubscribeService" interface="com.mysoft.b2b.event.api.app.AppSubscribeService" />
+	<dubbo:reference id="eventService" interface="com.mysoft.b2b.event.api.event.EventService" />
+	<dubbo:reference id="appService" interface="com.mysoft.b2b.event.api.app.AppService"></dubbo:reference>
+	
+</beans>
